@@ -153,7 +153,7 @@ Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't** (this release).
 | BR-08 | Privacy: no sign-up, no guest personal data, not listed in search engines, and the couple approves every word and photo. | Must | It is their personal story. |
 | BR-09 | No recurring hosting cost and a small materials budget. | Must | A gift from a friend, not a vendor project. |
 | BR-10 | Feels personal and celebratory: told in the couple's voices, beautiful on a phone, and visually tied to the physical photos. | Should | The difference between a link and a keepsake. |
-| BR-11 | Encourages guests to explore the whole table, e.g. "photos found: 2 of 6". | Should | Drives engagement with the decor itself. |
+| BR-11 | Encourages guests to explore the whole table, e.g. "photos found: 2 of 8". | Should | Drives engagement with the decor itself. |
 | BR-12 | Easy for older guests: clear instructions, a larger-text option, a helper on the day. | Should | Important family audience. |
 | BR-13 | "Tap to open": the book opens on a phone only after a tag tap or the table-card QR, and can be switched to open-to-all after the wedding. | Should | Light privacy plus a little magic; easy sharing later. |
 | BR-14 | Optional links to leave the couple a wish and to share photos, using tools the couple already has (e.g., Google Form, shared album). | Should | Guest interaction without building a backend. |

@@ -108,10 +108,12 @@ Browser tests need a one-time `npx playwright install chromium`.
 
 ## Going live
 
-1. Merge the work into the `main` branch.
-2. On GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
-3. Every push to `main` then runs the check and the tests and publishes `site/` to
-   <https://sweetpotating.github.io/bff-wedding/> within a couple of minutes.
+1. On GitHub: **Settings → Pages → Build and deployment → Source: GitHub Actions**.
+2. Create a `main` branch from `claude/wedding-storybook-nfc-46miha` (**Code → Branches → New
+   branch**) and make it the default (**Settings → General → Default branch**).
+3. **Actions → Storybook → Run workflow** on `main`. From then on, every push to `main` runs the
+   check and the tests and publishes `site/` to <https://sweetpotating.github.io/bff-wedding/>
+   within a couple of minutes.
 4. Once the stories are final, add a repository variable `STRICT_CHECK` = `true`
    (**Settings → Secrets and variables → Actions → Variables**), so draft text can never be
    published.
