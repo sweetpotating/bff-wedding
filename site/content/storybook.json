@@ -16,6 +16,11 @@
     "album": ""
   },
   "accent": "",
+  "mission": {
+    "enabled": true,
+    "prize": "✎ What everyone who finds all 8 photos gets, e.g. a souvenir from our travels",
+    "claim": "✎ How to claim it, e.g. Show this screen to our bridesmaid at the guestbook table"
+  },
   "tags": {
     "0": "contact-sheet",
     "1": "how-we-met",
@@ -25,12 +30,14 @@
     "5": "iceland",
     "6": "new-zealand",
     "7": "the-proposal",
-    "8": "wedding-shoot"
+    "8": "wedding-shoot",
+    "claim": "claim"
   },
   "stories": [
     {
       "id": "how-we-met",
       "title": "How We Met",
+      "word": "Thank",
       "caption": "✎ Where and when, e.g. a friend's birthday dinner, 2017",
       "photo": {
         "src": "images/01-how-we-met.svg",
@@ -49,6 +56,7 @@
     {
       "id": "first-date",
       "title": "Our First Date",
+      "word": "you",
       "caption": "✎ Where and when",
       "photo": {
         "src": "images/02-first-date.svg",
@@ -67,6 +75,7 @@
     {
       "id": "when-we-knew",
       "title": "When We Knew",
+      "word": "for",
       "caption": "✎ Where and when",
       "photo": {
         "src": "images/03-when-we-knew.svg",
@@ -86,6 +95,7 @@
       "id": "taiwan",
       "kicker": "Adventure 1 of 3",
       "title": "Taiwan",
+      "word": "being",
       "caption": "✎ Where you went and when, e.g. city names and month, year",
       "photo": {
         "src": "images/04-taiwan.svg",
@@ -105,6 +115,7 @@
       "id": "iceland",
       "kicker": "Adventure 2 of 3",
       "title": "Iceland",
+      "word": "part",
       "caption": "✎ Where you went and when",
       "photo": {
         "src": "images/05-iceland.svg",
@@ -124,6 +135,7 @@
       "id": "new-zealand",
       "kicker": "Adventure 3 of 3",
       "title": "New Zealand",
+      "word": "of",
       "caption": "✎ Where you went and when",
       "photo": {
         "src": "images/06-new-zealand.svg",
@@ -142,6 +154,7 @@
     {
       "id": "the-proposal",
       "title": "The Proposal",
+      "word": "our",
       "caption": "✎ Where and when",
       "photo": {
         "src": "images/07-the-proposal.svg",
@@ -160,6 +173,7 @@
     {
       "id": "wedding-shoot",
       "title": "The Wedding Shoot",
+      "word": "story",
       "caption": "✎ Where and when",
       "photo": {
         "src": "images/08-wedding-shoot.svg",

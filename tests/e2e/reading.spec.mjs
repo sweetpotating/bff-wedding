@@ -59,7 +59,11 @@ test('found photos are counted and circled (AC-09)', async ({ page }) => {
   }
 });
 
-test('finding every photo shows the completion note', async ({ page }) => {
+test('without the mission, finding every photo shows the completion note', async ({ page }) => {
+  await withContent(page, (b) => {
+    b.mission = { enabled: false };
+    return b;
+  });
   for (const [tag] of storyTags) await page.goto(`/?t=${tag}`);
   await page.goto('/#contact-sheet');
   await expect(page.locator('.complete')).toContainText(`You found all ${taggedStories.length}`);

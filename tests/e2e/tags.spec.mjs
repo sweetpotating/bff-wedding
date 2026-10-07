@@ -19,7 +19,7 @@ test('every tag in the tag map opens its target (AC-02)', async ({ browser }) =>
     const context = await browser.newContext();
     const page = await context.newPage();
     await page.goto(`/?t=${tag}`);
-    if (target === 'contact-sheet') {
+    if (target === 'contact-sheet' || target === 'claim') {
       await expect(page.locator('main')).toHaveAttribute('data-view', 'sheet');
     } else if (target === 'cover') {
       await expect(page.locator('main')).toHaveAttribute('data-view', 'cover');

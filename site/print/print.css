@@ -183,7 +183,7 @@ code {
   text-transform: uppercase;
 }
 .tags td {
-  padding: 5px 6px;
+  padding: 3px 6px;
   border-bottom: 1px solid var(--line);
   vertical-align: middle;
 }
@@ -206,12 +206,12 @@ code {
   text-decoration: none;
 }
 .c-qr {
-  width: 22mm;
+  width: 20mm;
 }
 .c-qr .qr {
   display: block;
-  width: 19mm;
-  height: 19mm;
+  width: 17mm;
+  height: 17mm;
 }
 .c-check {
   width: 24mm;
@@ -272,6 +272,9 @@ code {
   font-family: var(--serif);
   font-size: 36px;
   font-weight: 600;
+}
+.mark .m-star {
+  fill: var(--pencil);
 }
 .mark .m-wave {
   fill: none;
@@ -348,6 +351,12 @@ code {
   margin: 0 0 4mm;
   font-size: 12.5pt;
   line-height: 1.32;
+}
+.card-mission {
+  margin: 0 0 4mm;
+  font-size: 11pt;
+  font-weight: 600;
+  color: var(--pencil);
 }
 .card-how {
   margin: 0 0 2mm;

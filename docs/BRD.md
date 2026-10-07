@@ -162,6 +162,7 @@ Priority uses MoSCoW: **Must**, **Should**, **Could**, **Won't** (this release).
 | BR-17 | Anonymous tap counts per photo, collected without cookies. | Could | Lets the couple see what guests enjoyed; adds a third-party service. |
 | BR-18 | A post-wedding chapter (e.g., "The Big Day") so the book becomes a keepsake. | Could | Extends the life of the frames at home. |
 | BR-19 | Native app, accounts, comments/likes, uploads into the site, livestream, payments. | Won't | Cost and complexity far beyond the value for one day. |
+| BR-20 | **Mission game:** every photo is a check-in that reveals one word of a message from the couple; finding all of them wins a prize, claimed in person. The prize is still open (Q11). | Should | Turns the table into a reason to explore every photo, and the reward lands on the couple's message, not just the taps. Prototype built; see PRD §6 I. |
 
 ## 9. Key decisions
 
@@ -273,6 +274,9 @@ day (**W**).
 | Q8 | Are any frames metal? Frame sizes? | Assume wood or acrylic; order a few on-metal tags anyway |
 | Q9 | A custom web address (e.g., huixinandyongquan.com)? | No; use the free GitHub Pages address |
 | Q10 | Is a helper available to stand near the table for the first hour? | Ask a member of the bridal party |
+| Q11 | What is the mission prize? One for every finisher, a lucky draw at dinner, or both? | Both: a small souvenir from the couple's trips for every finisher (e.g. pineapple cake from Taiwan), and finishers' claim codes go into one lucky draw at dinner. Budget TBD |
+| Q12 | Who hands out prizes, and where? (They hold the claim card.) | A bridesmaid at the guestbook table |
+| Q13 | Is the mission message right? Each photo reveals one word, in frame order. | *Thank you for being part of our story* (8 words, one per photo) |
 
 ## 15. Sign-off
 

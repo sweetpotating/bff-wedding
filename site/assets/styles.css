@@ -59,6 +59,8 @@
   --on-print: #4b4641;     /* pen on a print; prints stay light in both themes */
   --pencil-on-print: #b8283a;
   --shadow: rgba(31, 28, 26, 0.16);
+  --ok: #2d6a45;           /* prize claimed */
+  --warn: #8a5300;         /* already claimed */
   --holes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Crect x='4' y='0.5' width='10' height='7' rx='1.6' fill='%23f3f3ef'/%3E%3C/svg%3E");
 
   --font-serif: "Alegreya", "Iowan Old Style", Georgia, "Times New Roman", serif;
@@ -89,6 +91,8 @@
     --pencil: #ff6b70;
     --print: #e9e5de;
     --shadow: rgba(0, 0, 0, 0.55);
+    --ok: #7cc79b;
+    --warn: #f0b45c;
     --holes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Crect x='4' y='0.5' width='10' height='7' rx='1.6' fill='%232b2724'/%3E%3C/svg%3E");
     color-scheme: dark;
   }
@@ -104,6 +108,8 @@
   --pencil: #ff6b70;
   --print: #e9e5de;
   --shadow: rgba(0, 0, 0, 0.55);
+  --ok: #7cc79b;
+  --warn: #f0b45c;
   --holes: url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Crect x='4' y='0.5' width='10' height='7' rx='1.6' fill='%232b2724'/%3E%3C/svg%3E");
   color-scheme: dark;
 }
@@ -944,6 +950,266 @@ main:focus {
   margin: 14px 0 0;
 }
 
+/* ---------- Mission ---------- */
+
+.stamp {
+  display: inline-block;
+  margin: 0;
+  padding: 3px 10px 2px;
+  border: 2px solid var(--pencil);
+  border-radius: 3px;
+  color: var(--pencil);
+  font-family: var(--font-mono);
+  font-size: 0.78rem;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  transform: rotate(-4deg);
+  transform-origin: left center;
+}
+@keyframes stamp-in {
+  0% {
+    opacity: 0;
+    transform: scale(1.7) rotate(-14deg);
+  }
+  70% {
+    opacity: 1;
+    transform: scale(0.96) rotate(-3deg);
+  }
+  100% {
+    opacity: 1;
+    transform: scale(1) rotate(-4deg);
+  }
+}
+.is-new .stamp,
+.mission-done .stamp {
+  animation: stamp-in 0.55s cubic-bezier(0.2, 0.8, 0.3, 1) both;
+}
+
+.check-in {
+  display: grid;
+  gap: 8px;
+  justify-items: start;
+  margin: 0 0 24px;
+  padding: 14px 16px 16px;
+  border-left: 3px solid var(--pencil);
+  background: var(--paper-2);
+}
+.check-in p {
+  margin: 0;
+}
+.check-in-word {
+  font-size: var(--step-1);
+  line-height: 1.3;
+}
+.check-in-word span {
+  font-family: var(--font-hand);
+  font-size: 1.45em;
+  color: var(--pencil);
+}
+.check-in-count {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+}
+
+.word-card {
+  display: grid;
+  gap: 6px;
+  margin-top: 22px;
+  padding: 14px 16px;
+  border: 1.5px dashed var(--line);
+  border-radius: 2px;
+}
+.word-card p {
+  margin: 0;
+}
+.word-card.is-found {
+  border-style: solid;
+  border-color: var(--pencil);
+}
+.word-card .word {
+  font-family: var(--font-hand);
+  font-size: var(--step-2);
+  line-height: 1.2;
+  color: var(--pencil);
+}
+.word-card a {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  min-height: 44px;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+}
+.word-card a svg {
+  width: 16px;
+  height: 16px;
+}
+
+.mission-teaser {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin-top: 30px;
+  padding: 16px 18px 18px;
+  border: 1.5px solid var(--pencil);
+  border-radius: 2px;
+}
+.mission-teaser p {
+  margin: 0;
+}
+.mission-teaser .eyebrow {
+  color: var(--pencil);
+}
+
+.closed-prize {
+  margin: 24px 0 0;
+  padding: 12px 16px;
+  border: 1.5px dashed var(--pencil);
+  border-radius: 2px;
+}
+
+.mission-intro {
+  margin: 12px 0 0;
+  color: var(--ink-2);
+}
+
+.sentence {
+  margin: 22px 0 0;
+  font-family: var(--font-hand);
+  font-size: var(--step-2);
+  line-height: 1.7;
+  overflow-wrap: anywhere;
+}
+.slot.is-found {
+  color: var(--pencil);
+}
+.blank {
+  display: inline-block;
+  min-width: 3.4em;
+  border-bottom: 2px dashed var(--ink-2);
+  font-family: var(--font-mono);
+  font-size: 0.5em;
+  line-height: 1.2;
+  text-align: center;
+  vertical-align: 0.1em;
+  color: var(--ink-2);
+}
+
+.prize-teaser,
+.prize,
+.claim-how {
+  margin: 14px 0 0;
+}
+.prize-teaser strong,
+.prize strong,
+.claim-how strong {
+  font-weight: 600;
+}
+
+.flash {
+  display: grid;
+  gap: 6px;
+  justify-items: start;
+  margin: 18px 0 0;
+  padding: 14px 16px;
+  border: 2px solid var(--ink-2);
+  border-radius: 2px;
+}
+.flash p {
+  margin: 0;
+}
+.flash.is-ok,
+.flash.is-ok .stamp {
+  border-color: var(--ok);
+  color: var(--ok);
+}
+.flash.is-warn,
+.flash.is-warn .stamp {
+  border-color: var(--warn);
+  color: var(--warn);
+}
+.flash .stamp {
+  border-color: currentColor;
+  color: inherit;
+}
+.flash > p:not(.stamp) {
+  color: var(--ink);
+}
+
+.mission-done {
+  display: grid;
+  gap: 10px;
+  justify-items: start;
+  margin-top: 22px;
+  padding: 20px 18px;
+  border: 2px solid var(--pencil);
+  border-radius: 2px;
+  background: var(--paper-2);
+}
+.mission-done p {
+  margin: 0;
+}
+.done-message {
+  margin: 4px 0 0;
+  font-family: var(--font-hand);
+  font-size: var(--step-3);
+  font-weight: 400;
+  line-height: 1.2;
+  color: var(--pencil);
+  text-wrap: balance;
+}
+.done-from {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.done-from::before {
+  content: "— ";
+}
+.code {
+  display: flex;
+  align-items: baseline;
+  flex-wrap: wrap;
+  gap: 4px 12px;
+  margin-top: 6px !important;
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.12em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.code span {
+  font-size: 1.6rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  color: var(--ink);
+}
+.claim-status {
+  font-family: var(--font-mono);
+  font-size: var(--step--1);
+  letter-spacing: 0.08em;
+  color: var(--ink-2);
+}
+.claim-status.is-claimed {
+  color: var(--ok);
+  font-weight: 500;
+}
+
+.sheet .frame-word {
+  display: block;
+  padding: 0 2px 8px;
+  font-family: var(--font-hand);
+  font-size: 1.15rem;
+  line-height: 1.2;
+  color: var(--edge);
+}
+
 /* ---------- Wider screens ---------- */
 
 @media (min-width: 720px) {
@@ -967,7 +1233,9 @@ main:focus {
 
 @media (prefers-reduced-motion: reduce) {
   .develop,
-  .just-found .circle path {
+  .just-found .circle path,
+  .is-new .stamp,
+  .mission-done .stamp {
     animation: none;
   }
   .strip {

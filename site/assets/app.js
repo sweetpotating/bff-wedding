@@ -4,6 +4,10 @@
  * Opening it opens the whole book on this phone, marks tag 7's story as found,
  * rewrites the address to  …/bff-wedding/#the-proposal  and shows that story.
  *
+ * Mission mode (optional): each photo is a check-in that reveals one word of a message
+ * from the couple. Finding all of them completes the mission; a "claim" tag held by a
+ * helper marks the prize as collected on that phone.
+ *
  * Everything the guest reads comes from content/storybook.json. No dependencies.
  */
 (function () {
@@ -11,7 +15,8 @@
 
   var CONTENT_URL = 'content/storybook.json';
   var KEY = 'storybook:v1:';
-  var RESERVED = ['cover', 'contact-sheet', 'thank-you'];
+  var RESERVED = ['cover', 'contact-sheet', 'thank-you', 'claim'];
+  var CODE_CHARS = 'ABCDEFGHJKLMNPQRSTUVWXYZ23456789';
   var DRAFT = '✎';
 
   var bar = document.getElementById('bar');
@@ -21,6 +26,7 @@
   var drafts = false;
   var memory = {};
   var pendingCircles = [];
+  var flash = null;
   var developed = {};
   var offlineReady = false;
   var lastView = null;
@@ -52,7 +58,7 @@
 
   function forget() {
     memory = {};
-    ['opened', 'found', 'large'].forEach(function (name) {
+    ['opened', 'found', 'large', 'code', 'claimed'].forEach(function (name) {
       try {
         window.localStorage.removeItem(KEY + name);
       } catch (e) {
@@ -133,6 +139,11 @@
       links: b.links && typeof b.links === 'object' ? b.links : {},
       accent: b.accent || '',
       tags: b.tags && typeof b.tags === 'object' ? b.tags : {},
+      mission: {
+        enabled: Boolean(b.mission && b.mission.enabled === true),
+        prize: (b.mission && b.mission.prize) || '',
+        claim: (b.mission && b.mission.claim) || ''
+      },
       stories: stories
     };
   }
@@ -172,6 +183,80 @@
     return book.gate === 'open' || load('opened', false) === true;
   }
 
+  /* ---------- Mission ---------- */
+
+  function missionOn() {
+    return book.mission.enabled && taggedStoryIds().length > 0;
+  }
+
+  function progress() {
+    var tagged = taggedStoryIds();
+    var found = foundIds().filter(function (id) {
+      return tagged.indexOf(id) >= 0;
+    });
+    return { found: found.length, total: tagged.length, complete: tagged.length > 0 && found.length === tagged.length };
+  }
+
+  var progressNow = function () {
+    return progress();
+  };
+
+  /* Tagged stories in frame order, with their mission word. */
+  function missionSlots() {
+    var tagged = taggedStoryIds();
+    var found = foundIds();
+    var slots = [];
+    book.stories.forEach(function (s, i) {
+      if (tagged.indexOf(s.id) >= 0) slots.push({ story: s, num: i + 1, found: found.indexOf(s.id) >= 0 });
+    });
+    return slots;
+  }
+
+  function message() {
+    return missionSlots()
+      .map(function (slot) {
+        return plain(slot.story.word);
+      })
+      .join(' ');
+  }
+
+  /* A short code for this phone, e.g. HY-7K3P, to show the helper or write on a draw slip. */
+  function claimCode() {
+    var code = load('code', null);
+    if (typeof code === 'string' && code) return code;
+    var chars = '';
+    var values = new Uint8Array(4);
+    if (window.crypto && window.crypto.getRandomValues) window.crypto.getRandomValues(values);
+    else for (var i = 0; i < 4; i++) values[i] = Math.floor(Math.random() * 256);
+    for (var j = 0; j < 4; j++) chars += CODE_CHARS.charAt(values[j] % CODE_CHARS.length);
+    code = plain(book.names[0]).charAt(0).toUpperCase() + plain(book.names[1]).charAt(0).toUpperCase() + '-' + chars;
+    save('code', code);
+    return code;
+  }
+
+  function claimedAt() {
+    var at = load('claimed', null);
+    return typeof at === 'string' && at ? at : null;
+  }
+
+  function claimPrize() {
+    if (!missionOn()) return null;
+    if (!progress().complete) return { type: 'not-yet' };
+    var at = claimedAt();
+    if (at) return { type: 'already', at: at };
+    at = new Date().toISOString();
+    save('claimed', at);
+    return { type: 'claimed', at: at };
+  }
+
+  function timeOf(iso) {
+    try {
+      return new Date(iso).toLocaleTimeString([], { hour: 'numeric', minute: '2-digit' });
+    } catch (e) {
+      return '';
+    }
+  }
+
   /* ---------- Tag entry ---------- */
 
   /* Handle a tap on tag `tagId`. Returns the route to show. */
@@ -183,13 +268,20 @@
       console.warn('Storybook: tag "' + id + '" is not in the tag map, so it opens the contact sheet.');
       return 'contact-sheet';
     }
+    if (target === 'claim') {
+      flash = claimPrize();
+      return 'contact-sheet';
+    }
     if (storyIndex(target) >= 0) {
       var found = foundIds();
-      if (found.indexOf(target) < 0) {
+      var isNew = found.indexOf(target) < 0;
+      if (isNew) {
         found.push(target);
         save('found', found);
         pendingCircles.push(target);
+        if (book.mission.enabled) claimCode();
       }
+      flash = { type: 'check-in', id: target, isNew: isNew };
       return target;
     }
     if (RESERVED.indexOf(target) >= 0) return target;
@@ -331,12 +423,14 @@
       initial(book.names[1]) +
       '</a><div class="bar-actions">';
     if (isOpen()) {
+      var p = missionOn() ? progress() : null;
       html +=
         '<a class="bar-btn" href="#contact-sheet"' +
         (key === 'sheet' ? ' aria-current="page"' : '') +
+        (p ? ' aria-label="Mission: ' + p.found + ' of ' + p.total + ' photos found"' : '') +
         '>' +
         ICONS.grid +
-        '<span>All frames</span></a>';
+        (p ? '<span>Mission ' + p.found + '/' + p.total + '</span></a>' : '<span>All frames</span></a>');
     }
     html +=
       '<button type="button" class="bar-btn text-size" data-action="text-size" aria-pressed="' +
@@ -401,6 +495,107 @@
     );
   }
 
+  /* ---------- Mission pieces ---------- */
+
+  function richLine(label, value, className) {
+    if (!value) return '';
+    return (
+      '<p class="' + className + (isDraft(value) ? ' draft' : '') + '"><strong>' + label + '</strong> ' + draftMark(value) + fmt(value) + '</p>'
+    );
+  }
+
+  function missionTeaser() {
+    if (!missionOn()) return '';
+    var p = progress();
+    return (
+      '<section class="mission-teaser" aria-labelledby="mission-teaser-h">' +
+      '<p class="eyebrow" id="mission-teaser-h">Mission</p>' +
+      '<p>Find all ' + p.total + ' photos on the table. Each one you tap reveals a word of a message from ' + esc(coupleNames()) +
+      '. Complete the message to win a prize.</p>' +
+      '<a class="btn" href="#contact-sheet">' + (p.found ? 'Your mission: ' + p.found + ' of ' + p.total : 'See the mission') + ICONS.arrow + '</a>' +
+      '</section>'
+    );
+  }
+
+  function checkInBanner(s, num) {
+    if (!flash || flash.type !== 'check-in' || flash.id !== s.id) return '';
+    var f = flash;
+    flash = null;
+    if (!missionOn()) return '';
+    var p = progress();
+    return (
+      '<div class="check-in' + (f.isNew ? ' is-new' : '') + '" role="status">' +
+      '<p class="stamp">' + (f.isNew ? 'Checked in' : 'Already checked in') + '</p>' +
+      (s.word ? '<p class="check-in-word">Your word: <span>' + fmt(s.word) + '</span></p>' : '') +
+      '<p class="check-in-count">Photo ' + num + ' · ' + p.found + ' of ' + p.total + ' found</p>' +
+      (p.complete ? '<a class="btn primary" href="#contact-sheet">Mission complete: see your prize' + ICONS.arrow + '</a>' : '') +
+      '</div>'
+    );
+  }
+
+  function wordCard(s, num, found) {
+    if (!missionOn() || taggedStoryIds().indexOf(s.id) < 0) return '';
+    var p = progress();
+    if (found) {
+      return (
+        '<div class="word-card is-found"><p class="label">This photo’s word</p>' +
+        '<p class="word">' + fmt(s.word) + '</p>' +
+        '<a href="#contact-sheet">Mission: ' + p.found + ' of ' + p.total + ' found' + ICONS.arrow + '</a></div>'
+      );
+    }
+    return (
+      '<div class="word-card"><p class="label">Mission</p>' +
+      '<p>Tap the round mark on photo ' + num + ' at the table to reveal this photo’s word.</p></div>'
+    );
+  }
+
+  function sentenceHtml() {
+    return (
+      '<p class="sentence">' +
+      missionSlots()
+        .map(function (slot) {
+          return slot.found
+            ? '<span class="slot is-found">' + fmt(slot.story.word) + '</span>'
+            : '<span class="slot"><span class="blank" aria-hidden="true">' + slot.num + '</span>' +
+                '<span class="sr-only">(missing word from photo ' + slot.num + ')</span></span>';
+        })
+        .join(' ') +
+      '</p>'
+    );
+  }
+
+  function claimFlash() {
+    if (!flash || ['claimed', 'already', 'not-yet'].indexOf(flash.type) < 0) return '';
+    var f = flash;
+    flash = null;
+    var p = progress();
+    if (f.type === 'claimed') {
+      return '<div class="flash is-ok" role="status"><p class="stamp">Prize claimed</p><p>Enjoy! Claimed at ' + esc(timeOf(f.at)) + '.</p></div>';
+    }
+    if (f.type === 'already') {
+      return '<div class="flash is-warn" role="status"><p class="stamp">Already claimed</p><p>This phone claimed its prize at ' + esc(timeOf(f.at)) + '.</p></div>';
+    }
+    return (
+      '<div class="flash" role="status"><p class="stamp">Not yet</p><p>' + p.found + ' of ' + p.total +
+      ' photos found. The prize unlocks when you’ve found all ' + p.total + '.</p></div>'
+    );
+  }
+
+  function missionDone() {
+    var at = claimedAt();
+    return (
+      '<section class="mission-done" aria-labelledby="mission-done-h">' +
+      '<p class="stamp">Mission complete</p>' +
+      '<h2 class="done-message" id="mission-done-h">' + esc(message()) + '</h2>' +
+      '<p class="done-from">' + esc(coupleNames()) + '</p>' +
+      richLine('Your prize:', book.mission.prize, 'prize') +
+      richLine('How to claim:', book.mission.claim, 'claim-how') +
+      '<p class="code">Claim code <span>' + esc(claimCode()) + '</span></p>' +
+      '<p class="claim-status' + (at ? ' is-claimed' : '') + '">' + (at ? 'Claimed ✓ at ' + esc(timeOf(at)) : 'Not claimed yet') + '</p>' +
+      '</section>'
+    );
+  }
+
   /* ---------- Views ---------- */
 
   function viewClosed() {
@@ -418,7 +613,9 @@
       '<li><p><strong>iPhone:</strong> hold the top of your phone to the round mark beside a photo, then tap the banner that appears.</p></li>' +
       '<li><p><strong>Android:</strong> make sure NFC is on, then hold the middle of your phone’s back to the mark.</p></li>' +
       '<li><p><strong>No NFC?</strong> Scan the code on the table card with your camera.</p></li>' +
-      '</ul></div>';
+      '</ul>' +
+      (missionOn() ? '<p class="closed-prize"><strong>There’s a prize</strong> for finding all ' + progress().total + ' photos.</p>' : '') +
+      '</div>';
     return { title: '', html: html };
   }
 
@@ -454,6 +651,7 @@
         return para(p);
       }).join('') +
       '</div>' +
+      missionTeaser() +
       '<div class="actions">' +
       (first ? '<a class="btn primary" href="#' + esc(first.id) + '">Start with frame 1' + ICONS.arrow + '</a>' : '') +
       '<a class="btn" href="#contact-sheet">See all ' +
@@ -553,6 +751,7 @@
     var html =
       band('▸ ' + num, coupleNames(), '▸ ' + num + 'A') +
       '<div class="page story"><article>' +
+      checkInBanner(s, num) +
       '<p class="frame-no">Frame ' +
       num +
       ' of ' +
@@ -570,6 +769,7 @@
       'A</p>' +
       (found ? '<p class="found-note">found at the table ✓</p>' : '') +
       '</figure>' +
+      wordCard(s, num, found) +
       '<div class="prose">' +
       s.body.map(function (p) {
         return para(p);
@@ -613,8 +813,19 @@
     var animate = pendingCircles.slice();
     pendingCircles = [];
 
+    var mission = missionOn();
     var progress = '';
-    if (tagged.length) {
+    if (mission) {
+      var p = progressNow();
+      progress =
+        claimFlash() +
+        (p.complete ? '' : sentenceHtml()) +
+        '<p class="progress">Photos found at the table: <strong>' + p.found + ' of ' + p.total + '</strong></p>' +
+        (p.complete
+          ? missionDone()
+          : richLine('Prize:', book.mission.prize, 'prize-teaser') +
+            '<p class="hint">Tap the round marks beside the photos on the table. Each photo you find gets circled here and fills in its word.</p>');
+    } else if (tagged.length) {
       progress =
         '<p class="progress">Photos found at the table: <strong>' + found.length + ' of ' + tagged.length + '</strong></p>';
       if (found.length === tagged.length) {
@@ -649,7 +860,9 @@
           ': </span>' +
           fmt(s.title) +
           (isFound ? '<span class="sr-only"> (found at the table)</span>' : '') +
-          '</span></span></a></li>'
+          '</span></span>' +
+          (mission && isFound && s.word ? '<span class="frame-word">' + fmt(s.word) + '</span>' : '') +
+          '</a></li>'
         );
       })
       .join('');
@@ -657,10 +870,11 @@
     var html =
       band('▸ 1', 'Contact sheet', '▸ ' + n + 'A') +
       '<div class="page wide sheet-page">' +
-      '<p class="eyebrow">Contact sheet</p>' +
-      '<h1 class="title">All ' +
-      n +
-      ' frames</h1>' +
+      (mission
+        ? '<p class="eyebrow">Your mission</p><h1 class="title">Find all ' + tagged.length + ' photos</h1>' +
+          '<p class="mission-intro">Each photo on the table hides one word of a message from ' + esc(coupleNames()) +
+          '. Tap a photo’s round mark to check in and reveal its word.</p>'
+        : '<p class="eyebrow">Contact sheet</p><h1 class="title">All ' + n + ' frames</h1>') +
       progress +
       '<ol class="sheet">' +
       items +
@@ -672,7 +886,7 @@
       'Saved on this phone. Works without signal.</p>' +
       linksHtml() +
       '</div>';
-    return { title: 'All frames', html: html };
+    return { title: mission ? 'Mission' : 'All frames', html: html };
   }
 
   function viewEnd() {
@@ -871,7 +1085,13 @@
     },
     state: function () {
       return book
-        ? { opened: isOpen(), found: foundIds(), large: load('large', false) === true, offlineReady: offlineReady }
+        ? {
+            opened: isOpen(),
+            found: foundIds(),
+            large: load('large', false) === true,
+            offlineReady: offlineReady,
+            mission: missionOn() ? { found: progress().found, total: progress().total, code: load('code', null), claimedAt: claimedAt() } : null
+          }
         : null;
     }
   };

@@ -26,7 +26,9 @@ test('every QR code in the print kit decodes to its tag link (AC-15)', async ({ 
 test('the print kit has two tap marks per frame and fits the tags', async ({ page }) => {
   await page.goto('/print/');
   await expect(page.locator('html')).toHaveAttribute('data-ready', '');
-  await expect(page.locator('.marks svg.mark')).toHaveCount(storyTags.length * 2);
+  const claimTags = Object.values(book.tags).filter((t) => t === 'claim').length;
+  const claimMarks = book.mission?.enabled ? claimTags * 2 : 0;
+  await expect(page.locator('.marks svg.mark')).toHaveCount(storyTags.length * 2 + claimMarks);
   await expect(page.locator('.c-link .warn')).toHaveCount(0);
   const first = page.locator(`tr[data-tag="${storyTags[0][0]}"] .c-link a`);
   await expect(first).toHaveAttribute('href', `../?t=${storyTags[0][0]}`);

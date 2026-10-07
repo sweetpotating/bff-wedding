@@ -96,3 +96,33 @@ test('invalid JSON reports a line and column', () => {
   const { error } = parseContent('{\n  "a": 1,\n  "b": 2,\n}');
   assert.match(error, /line 4/);
 });
+
+test('mission mode needs a word for every photo on the table', () => {
+  const book = copy();
+  book.mission.enabled = true;
+  delete book.stories[2].word;
+  assert.ok(has(checkBook(book).errors, /has no "word"/));
+});
+
+test('mission mode needs prize and claim text', () => {
+  const book = copy();
+  book.mission = { enabled: true, prize: '', claim: '' };
+  const { errors } = checkBook(book);
+  assert.ok(has(errors, /mission\.prize is missing/));
+  assert.ok(has(errors, /mission\.claim is missing/));
+});
+
+test('with the mission off, words are optional', () => {
+  const book = copy();
+  book.mission = { enabled: false };
+  book.stories.forEach((s) => delete s.word);
+  assert.deepEqual(checkBook(book).errors, []);
+});
+
+test('"claim" is reserved and can be a tag target', () => {
+  const book = copy();
+  book.stories[0].id = 'claim';
+  assert.ok(has(checkBook(book).errors, /reserved/));
+  assert.equal(copy().tags.claim, 'claim');
+  assert.deepEqual(checkBook(copy()).errors, []);
+});

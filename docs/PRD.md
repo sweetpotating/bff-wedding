@@ -60,6 +60,8 @@ tag mapping lives in one content file the couple can edit.
 | **Opened** | This phone has tapped a tag (or scanned the table-card QR), so the book is open on it. |
 | **Found** | A story whose tag this phone has tapped at the table. |
 | **Draft text** | Any text in the content file that starts with `✎`. It marks words the couple still has to write. |
+| **Mission** | Optional game: every photo on the table is a **check-in**. Each check-in reveals one **mission word**; together the words form a message from the couple. Finding all of them wins a prize. |
+| **Claim card** | A card held by a helper, with its own NFC tag (`?t=claim`). Tapping it marks the prize as collected on that phone. |
 
 ## 4. Experience overview
 
@@ -127,13 +129,14 @@ Big Day* with wedding photos, and the couple shares the link. The frames still w
 | `…/bff-wedding/#anything-else` | Unknown story: show the cover. |
 | `…/bff-wedding/print/` | Print kit. |
 | `…/bff-wedding/any/other/path?t=7` | GitHub Pages serves `404.html`, which forwards to `…/bff-wedding/?t=7`. |
+| `…/bff-wedding/?t=claim` | **Claim card** (mission mode): claims the prize if every photo is found, then shows the mission card. |
 
 Rules:
 
 - Tags only ever store `?t=<tag id>`, never a story id. Story ids can change; tag ids can't.
 - Tag ids: 1–16 characters, `a–z`, `0–9`, `-`. Frames use `1`–`8`; the table-card QR uses `0`.
-- Story ids: lowercase letters, digits and hyphens, unique, and not `cover`, `contact-sheet` or
-  `thank-you`.
+- Story ids: lowercase letters, digits and hyphens, unique, and not `cover`, `contact-sheet`,
+  `thank-you` or `claim`.
 - Internal navigation uses the `#` part only, so the site works on any static host with no
   server rules.
 
@@ -255,6 +258,35 @@ cover every AC marked **[auto]** (§13).
 - **AC-16 [auto]** *Given* `…/bff-wedding/oops?t=3`, *then* the browser ends up on the story
   mapped to tag 3.
 
+### I. Mission mode (BR-20, prototype)
+
+The prize itself is still undecided (BRD Q11); everything below works whatever it is.
+
+| ID | Requirement |
+|---|---|
+| FR-33 | Setting `mission.enabled` switches the game on or off. Off, the book behaves exactly as in sections A–H. |
+| FR-34 | Each story on the table has a `word`. In frame order, the words form a message from the couple (sample: *Thank you for being part of our story*). |
+| FR-35 | **Check-in:** a tag tap shows a *Checked in* stamp at the top of the story with that photo's word and the progress (*Photo 4 · 3 of 8 found*). Tapping a photo again says *Already checked in* and counts once. |
+| FR-36 | A story read without tapping its photo keeps its word hidden: *Tap the round mark on photo 4 at the table to reveal this photo's word.* |
+| FR-37 | The contact sheet becomes the **mission card**: the message with a numbered blank for each missing word, the progress, the prize, and each found frame's word under its circle. The top-bar button reads *Mission 3/8* on every screen. |
+| FR-38 | When every photo is found: a *Mission complete* card with the full message, the prize, how to claim it, a claim code for this phone (e.g. `HY-7K3P`) and its claim status. The last check-in links straight to it. |
+| FR-39 | **Claim card:** tapping the helper's `?t=claim` tag claims the prize once per phone and records the time. A second tap shows *Already claimed at 7:42 pm*; tapping before finishing shows *Not yet* with the progress. |
+| FR-40 | The closed cover and the open cover mention the prize; the print kit adds the claim tag to the tag sheet, two ★ tap marks for the claim card, and *Find all 8 photos to win a prize* on the table card. |
+
+- **AC-17 [auto]** *Given* mission mode, *when* a guest taps photo 4, *then* the story shows
+  *Checked in*, photo 4's word, and the bar reads *Mission 1/8*.
+- **AC-18 [auto]** *Given* one photo found, *then* the mission card shows its word and 7 blanks.
+- **AC-19 [auto]** *Given* all photos found, *when* the claim card is tapped twice, *then* the
+  first tap shows *Prize claimed* and the second *Already claimed*.
+- **AC-20 [auto]** *Given* fewer than all photos found, *when* the claim card is tapped, *then*
+  it shows *Not yet* and nothing is claimed.
+
+**Limits.** Progress lives on the phone, so the claim card and the helper's eyes are the
+check. Tag numbers are guessable (`?t=1` to `?t=8`); if the prize is worth gaming, switch the
+tag ids to random strings (e.g. `?t=k7q2`), which the content file and print kit already
+support. A live counter of finishers, or team scores by banquet table, would need a small
+backend (§15).
+
 ## 7. Content model
 
 All content lives in `site/content/storybook.json`. Text fields are plain text: `*word*` becomes
@@ -273,6 +305,7 @@ All content lives in `site/content/storybook.json`. Text fields are plain text: 
 | `gate` | `"tap"` \| `"open"` | yes | §6 B. |
 | `links.wishes`, `links.album` | string (https) | no | §6 E. Empty string hides the button. |
 | `accent` | CSS colour | no | Overrides the accent colour (the grease-pencil red) to match the wedding palette. |
+| `mission` | `{enabled, prize, claim}` | no | §6 I. `prize`: what finishers get. `claim`: how to claim it, e.g. *Show this screen to Mei at the guestbook table*. |
 | `tags` | object | yes | Tag id → story id, `contact-sheet` or `cover`. |
 | `stories` | Story[] | yes | In frame order. |
 
@@ -283,6 +316,7 @@ All content lives in `site/content/storybook.json`. Text fields are plain text: 
 | `id` | string | yes | Appears in the address, e.g. `taiwan`. |
 | `title` | string | yes | e.g. *Taiwan*. |
 | `kicker` | string | no | Small line above the title, e.g. *Adventure 1 of 3*. |
+| `word` | string | in mission mode | The mission word this photo reveals when tapped. |
 | `caption` | string | no | Handwritten line under the title: where and when, e.g. *Jiufen, March 2019*. |
 | `photo` | `{src, alt, position?}` | yes | Main photo. Cropped to 4:5 on screen; `position` (CSS `object-position`, e.g. `"50% 30%"`) keeps faces in frame. |
 | `body` | string[] | yes | 1–5 paragraphs, 80–200 words in total (about a one-minute read). |
@@ -304,6 +338,7 @@ All content lives in `site/content/storybook.json`. Text fields are plain text: 
 | 6 | `new-zealand` | New Zealand | Adventure 3 of 3 |
 | 7 | `the-proposal` | The Proposal | |
 | 8 | `wedding-shoot` | The Wedding Shoot | |
+| claim | `claim` | *(the helper's claim card, mission mode)* | |
 
 The starter content ships every story with writing prompts as draft text, so the couple can
 write straight into the file.
@@ -522,6 +557,7 @@ locked tags keep working.
 | Reading and navigation | AC-07, AC-08, AC-09, AC-10, AC-11, AC-14 |
 | Offline | AC-12 |
 | Print kit | AC-15 (decodes every QR code) |
+| Mission | AC-17 to AC-20, repeat taps, hidden words, prize mentions, reset, mission switched off |
 | Layout | No sideways scrolling at 320 px and 390 px on every screen; one `h1`; alt text on every image; no console errors (including Content-Security-Policy violations) |
 | Robustness | Blocked storage still opens the book for the visit; content is escaped, never run as code; unsafe links are dropped; reduced motion skips animation |
 
@@ -561,6 +597,7 @@ Release steps follow the BRD timeline (§13 there).
 | Voice notes (BR-16) | Already supported by `audio`; needs recordings. |
 | Tap counts (BR-17) | A cookie-less counter such as GoatCounter. It adds one third-party request; update §10.4. |
 | *The Big Day* chapter (BR-18) | Add a story after the wedding; no tag needed. |
+| Mission extras (BR-20) | Live "37 guests finished" counter or team scores by banquet table (needs a small backend); a lucky-draw form prefilled with the claim code; random tag ids. |
 | Custom domain | Point a domain at GitHub Pages; tags keep working. |
 
 ## 16. Open product questions
@@ -591,3 +628,4 @@ See BRD §14. Product-specific ones:
 | BR-13 | FR-08–FR-11 |
 | BR-14 | FR-23 |
 | BR-15–BR-18 | §15 |
+| BR-20 | FR-33–FR-40 |

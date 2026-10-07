@@ -7,7 +7,12 @@
   var kit = document.getElementById('kit');
   var NTAG213_BYTES = 144;
   var URI_PREFIXES = ['', 'http://www.', 'https://www.', 'http://', 'https://'];
-  var STORY_RESERVED = { 'contact-sheet': 'Contact sheet (all frames)', cover: 'Cover', 'thank-you': 'Thank-you page' };
+  var STORY_RESERVED = {
+    'contact-sheet': 'Contact sheet (all frames)',
+    cover: 'Cover',
+    'thank-you': 'Thank-you page',
+    claim: 'Prize claim (the helper’s claim card)'
+  };
 
   function esc(value) {
     return String(value == null ? '' : value).replace(/[&<>"']/g, function (c) {
@@ -87,14 +92,27 @@
       .join('');
   }
 
-  /* A 30 mm round tap mark to print on sticker paper and place over the NFC sticker. */
-  function tapMark(label, monogram) {
+  function star(cx, cy, outer, inner) {
+    var points = [];
+    for (var i = 0; i < 10; i++) {
+      var r = i % 2 ? inner : outer;
+      var a = (Math.PI / 5) * i - Math.PI / 2;
+      points.push((cx + r * Math.cos(a)).toFixed(2) + ',' + (cy + r * Math.sin(a)).toFixed(2));
+    }
+    return '<polygon class="m-star" points="' + points.join(' ') + '"/>';
+  }
+
+  /* A 30 mm round tap mark to print on sticker paper and place over the NFC sticker.
+     The claim card gets a star instead of a frame number. */
+  function tapMark(label, monogram, isClaim) {
     return (
-      '<svg class="mark" viewBox="0 0 100 100" role="img" aria-label="Tap mark for frame ' + esc(label) + '">' +
+      '<svg class="mark" viewBox="0 0 100 100" role="img" aria-label="' +
+      (isClaim ? 'Tap mark for the prize claim card' : 'Tap mark for frame ' + esc(label)) +
+      '">' +
       '<circle cx="50" cy="50" r="48.5" class="m-cut"/>' +
       '<circle cx="50" cy="50" r="45" class="m-ring"/>' +
-      '<text x="50" y="27" class="m-tap">TAP</text>' +
-      '<text x="45" y="66" class="m-num">' + esc(label) + '</text>' +
+      '<text x="50" y="27" class="m-tap">' + (isClaim ? 'PRIZE' : 'TAP') + '</text>' +
+      (isClaim ? star(45, 54, 15, 6.4) : '<text x="45" y="66" class="m-num">' + esc(label) + '</text>') +
       '<path class="m-wave" d="' + arcs(45, 55, [17, 24], -40, 40) + '"/>' +
       '<text x="50" y="84" class="m-mono">' + esc(monogram) + '</text>' +
       '</svg>'
@@ -111,8 +129,10 @@
     var monogram = names[0].charAt(0) + ' & ' + names[1].charAt(0);
     var stories = Array.isArray(book.stories) ? book.stories : [];
     var titleOf = {};
+    var frameOf = {};
     stories.forEach(function (s, i) {
       titleOf[String(s.id).toLowerCase()] = 'Frame ' + (i + 1) + ': ' + plain(s.title);
+      frameOf[String(s.id).toLowerCase()] = i + 1;
     });
     var tags = book.tags || {};
     var ids = Object.keys(tags).sort(function (a, b) {
@@ -129,7 +149,12 @@
         var link = tagLink(siteUrl, id);
         var bytes = ndefBytes(link);
         var fits = bytes <= NTAG213_BYTES;
-        var where = target === 'contact-sheet' ? 'Table card QR code (no NFC sticker needed)' : 'NFC sticker on the frame, plus 1 spare';
+        var where =
+          target === 'contact-sheet'
+            ? 'Table card QR code (no NFC sticker needed)'
+            : target === 'claim'
+              ? 'NFC sticker on the helper’s claim card, plus 1 spare. Keep it with the helper, not on the table.'
+              : 'NFC sticker on the frame, plus 1 spare';
         return (
           '<tr data-tag="' + esc(id) + '">' +
           '<td class="c-tag">' + esc(id) + '</td>' +
@@ -163,16 +188,31 @@
       return titleOf[String(tags[id]).toLowerCase()];
     });
     var marks = '';
+    /* Marks show the frame number guests see in the story, whatever the tag id is. */
     frameIds.forEach(function (id) {
-      marks += '<li>' + tapMark(id, monogram) + '<span>' + esc(id) + '</span></li>';
-      marks += '<li>' + tapMark(id, monogram) + '<span>' + esc(id) + ' spare</span></li>';
+      var frame = String(frameOf[String(tags[id]).toLowerCase()]);
+      var note = frame === id ? '' : ' (tag ' + id + ')';
+      marks += '<li>' + tapMark(frame, monogram) + '<span>frame ' + esc(frame + note) + '</span></li>';
+      marks += '<li>' + tapMark(frame, monogram) + '<span>frame ' + esc(frame + note) + ' spare</span></li>';
     });
+    var mission = Boolean(book.mission && book.mission.enabled === true);
+    var claimIds = ids.filter(function (id) {
+      return String(tags[id]).toLowerCase() === 'claim';
+    });
+    if (mission) {
+      claimIds.forEach(function (id) {
+        marks += '<li>' + tapMark(id, monogram, true) + '<span>claim card</span></li>';
+        marks += '<li>' + tapMark(id, monogram, true) + '<span>claim spare</span></li>';
+      });
+    }
     var tapMarks =
       '<section class="sheet-page" id="tap-marks" aria-labelledby="tap-marks-h">' +
       '<p class="eyebrow">' + esc(names.join(' & ')) + ' · sheet 2</p>' +
       '<h2 id="tap-marks-h">Tap marks</h2>' +
       '<p>30 mm round labels. Print on white sticker paper and cut along the outer circle, or use 30 mm round label sheets. ' +
-      'Stick each mark directly over its NFC sticker on the frame, so guests see the mark and not the chip. Keep marks at least 8 cm apart.</p>' +
+      'Stick each mark directly over its NFC sticker on the frame, so guests see the mark and not the chip. Keep marks at least 8 cm apart.' +
+      (mission && claimIds.length ? ' The ★ marks go on the helper’s claim card (any small card), over the claim sticker.' : '') +
+      '</p>' +
       '<ul class="marks">' + marks + '</ul>' +
       ruler() +
       '</section>';
@@ -188,6 +228,7 @@
       '<p class="card-eyebrow">' + esc(plain(book.eyebrow) || 'The story behind the photos') + '</p>' +
       '<p class="card-names">' + esc(names[0]) + ' <span>&amp;</span> ' + esc(names[1]) + '</p>' +
       '<p class="card-lead">Every photo on this table has a story. Tap your phone on the round mark beside any photo to read it.</p>' +
+      (mission ? '<p class="card-mission">Find all ' + frameIds.length + ' photos to win a prize.</p>' : '') +
       '<p class="card-how"><strong>iPhone:</strong> hold the top of your phone to the mark, then tap the banner that appears.</p>' +
       '<p class="card-how"><strong>Android:</strong> make sure NFC is on, then hold the middle of your phone’s back to the mark.</p>' +
       '<div class="card-qr">' + qrSvg(cardLink, 'QR code that opens the storybook') + '<p><strong>No NFC?</strong><br>Scan this code with your camera.</p></div>' +

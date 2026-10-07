@@ -80,7 +80,20 @@ Book settings at the top of the file:
 | `gate` | `"tap"`: the book opens on a phone after a tag tap or the table-card QR. `"open"`: anyone with the link can read it (use after the wedding). |
 | `links.wishes`, `links.album` | Optional https links, e.g. a Google Form for wishes or a shared photo album. Empty hides the button. |
 | `accent` | Optional colour (e.g. `"#8a5a44"`) to replace the grease-pencil red with the wedding colour. |
+| `mission` | The photo-hunt game: `enabled`, the `prize` and how to `claim` it. Each story's `word` is what its photo reveals. |
 | `tags` | Tag number → story id. `"0": "contact-sheet"` is the table-card QR code. |
+
+## The mission (optional game)
+
+With `"mission": { "enabled": true }`, every photo on the table becomes a check-in. Each tap
+stamps the photo and reveals one word of a message from the couple (sample: *Thank you for
+being part of our story*, one word per photo). The overview turns into a mission card that
+fills in the message as guests find photos. When every photo is found, the guest sees
+*Mission complete*, the prize, how to claim it, and a claim code for their phone.
+
+A helper holds the **claim card**, a small card with its own NFC sticker (`?t=claim`, printed
+with a ★ mark in the print kit). Tapping it claims the prize once per phone; a second tap shows
+*Already claimed*. Set `"enabled": false` to switch the game off.
 
 ## Adding photos
 

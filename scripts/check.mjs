@@ -10,7 +10,7 @@ import { fileURLToPath } from 'node:url';
 
 export const SITE_DIR = resolve(fileURLToPath(new URL('../site/', import.meta.url)));
 export const CONTENT_FILE = join(SITE_DIR, 'content', 'storybook.json');
-export const RESERVED = ['cover', 'contact-sheet', 'thank-you'];
+export const RESERVED = ['cover', 'contact-sheet', 'thank-you', 'claim'];
 export const NTAG213_BYTES = 144;
 const DRAFT = '✎';
 const PHOTO_WARN_BYTES = 400 * 1024;
@@ -121,6 +121,21 @@ export function checkBook(book, { siteDir = SITE_DIR, strict = false } = {}) {
     }
   }
 
+  // Mission
+  const mission = book.mission;
+  const missionOn = Boolean(mission && typeof mission === 'object' && mission.enabled === true);
+  if (mission !== undefined) {
+    if (!mission || typeof mission !== 'object' || Array.isArray(mission)) {
+      errors.push('mission must be an object: { "enabled": true, "prize": "…", "claim": "…" }.');
+    } else {
+      if (typeof mission.enabled !== 'boolean') errors.push('mission.enabled must be true or false.');
+      if (missionOn) {
+        if (!isText(mission.prize)) errors.push('mission.prize is missing. Say what everyone who finishes gets.');
+        if (!isText(mission.claim)) errors.push('mission.claim is missing. Say how guests claim the prize.');
+      }
+    }
+  }
+
   // Stories
   const stories = Array.isArray(book.stories) ? book.stories : [];
   if (!stories.length) errors.push('stories must be a list with at least one story.');
@@ -167,7 +182,7 @@ export function checkBook(book, { siteDir = SITE_DIR, strict = false } = {}) {
       ids.set(story.id, index);
     }
     if (!isText(story.title)) errors.push(`${label}: title is missing.`);
-    for (const key of ['kicker', 'caption']) {
+    for (const key of ['kicker', 'caption', 'word']) {
       if (story[key] !== undefined && typeof story[key] !== 'string') errors.push(`${label}: ${key} must be text in quotes.`);
     }
 
@@ -267,6 +282,22 @@ export function checkBook(book, { siteDir = SITE_DIR, strict = false } = {}) {
     }
     if (!Object.values(tags).includes('contact-sheet')) {
       warnings.push('No tag points to "contact-sheet". The table card QR code needs one (usually tag "0").');
+    }
+    if (missionOn) {
+      for (const id of tagged) {
+        if (!isText(stories[ids.get(id)].word)) {
+          errors.push(`Story "${id}" is on the table but has no "word". In mission mode each photo reveals one word of the message.`);
+        }
+      }
+      if (!Object.values(tags).includes('claim')) {
+        notes.push('No tag points to "claim", so the helper checks the "Mission complete" screen by eye instead of tapping a claim card.');
+      } else {
+        const message = stories
+          .filter((s) => s && tagged.has(s.id) && isText(s.word))
+          .map((s) => s.word.trim())
+          .join(' ');
+        notes.push(`Mission message: "${message}"`);
+      }
     }
     for (const id of ids.keys()) {
       if (!tagged.has(id)) notes.push(`Story "${id}" has no tag, so it isn't on the table (fine for a chapter added after the wedding).`);
