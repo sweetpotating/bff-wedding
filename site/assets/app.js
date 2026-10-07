@@ -1069,6 +1069,7 @@
     tap: function (tagId) {
       return ready.then(function () {
         var target = tap(tagId);
+        lastView = null;
         go(target);
         return target;
       });
