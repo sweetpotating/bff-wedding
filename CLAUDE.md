@@ -10,7 +10,8 @@ is the tag and day-of runbook.
   the repository name or the GitHub account name once tags are written.
 - Which story a tag opens is only `tags` in `site/content/storybook.json`. Change content
   there, never in code.
-- Reserved route ids: `cover`, `contact-sheet`, `thank-you`.
+- Reserved ids (story ids can't use them): `cover`, `contact-sheet`, `thank-you`, `claim`.
+  `claim` is the helper's prize claim card in mission mode.
 
 ## Code
 
