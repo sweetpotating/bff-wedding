@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1200 1500" width="1200" height="1500">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#000000" stop-opacity=".16"/>
+    </radialGradient>
+  </defs>
+  <rect width="1200" height="1500" fill="#9fb39a"/>
+  <rect width="1200" height="1500" fill="url(#g)"/>
+  <rect x="48" y="48" width="1104" height="1404" fill="none" stroke="#1f1c1a" stroke-opacity=".28" stroke-width="3" stroke-dasharray="14 12"/>
+  <text x="600" y="675" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-size="360" fill="#1f1c1a" fill-opacity=".72">6</text>
+  <text x="600" y="869.9999999999999" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="74.4" fill="#1f1c1a" fill-opacity=".82">New Zealand</text>
+  <text x="600" y="990" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="36" letter-spacing="4" fill="#1f1c1a" fill-opacity=".6">PHOTO GOES HERE · PORTRAIT 4:5</text>
+</svg>

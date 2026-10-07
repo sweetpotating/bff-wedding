@@ -1,0 +1,24 @@
+{
+  "name": "bff-wedding-storybook",
+  "version": "1.0.0",
+  "private": true,
+  "description": "The Storybook Table: an NFC-linked online storybook for Huixin & Yongquan's wedding.",
+  "type": "module",
+  "engines": {
+    "node": ">=20"
+  },
+  "scripts": {
+    "start": "node scripts/serve.mjs",
+    "check": "node scripts/check.mjs",
+    "check:strict": "node scripts/check.mjs --strict",
+    "photos": "node scripts/photos.mjs",
+    "test": "npm run test:unit && npm run test:e2e",
+    "test:unit": "node --test \"tests/unit/*.test.mjs\"",
+    "test:e2e": "playwright test"
+  },
+  "devDependencies": {
+    "@playwright/test": "1.56.1",
+    "jsqr": "1.4.0",
+    "sharp": "0.35.5"
+  }
+}

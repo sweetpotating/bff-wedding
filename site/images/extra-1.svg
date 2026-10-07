@@ -1,0 +1,14 @@
+<svg xmlns="http://www.w3.org/2000/svg" viewBox="0 0 1500 1000" width="1500" height="1000">
+  <defs>
+    <radialGradient id="g" cx="50%" cy="42%" r="75%">
+      <stop offset="0" stop-color="#ffffff" stop-opacity=".38"/>
+      <stop offset="1" stop-color="#000000" stop-opacity=".16"/>
+    </radialGradient>
+  </defs>
+  <rect width="1500" height="1000" fill="#bdbab3"/>
+  <rect width="1500" height="1000" fill="url(#g)"/>
+  <rect x="48" y="48" width="1404" height="904" fill="none" stroke="#1f1c1a" stroke-opacity=".28" stroke-width="3" stroke-dasharray="14 12"/>
+  
+  <text x="750" y="500" text-anchor="middle" font-family="Georgia, 'Times New Roman', serif" font-style="italic" font-size="93" fill="#1f1c1a" fill-opacity=".82">Extra photo</text>
+  <text x="750" y="600" text-anchor="middle" font-family="ui-monospace, Menlo, Consolas, monospace" font-size="45" letter-spacing="4" fill="#1f1c1a" fill-opacity=".6">ANY SHAPE · UP TO 6 PER STORY</text>
+</svg>

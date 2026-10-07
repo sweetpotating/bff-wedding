@@ -1,0 +1,448 @@
+/* Print kit. On screen each sheet shows as a page; printed, each sheet is one A4 page.
+   Physical sizes are in millimetres so labels and the card come out the right size. */
+
+@font-face {
+  font-family: "Alegreya";
+  font-style: normal;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/alegreya-latin-400-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Alegreya";
+  font-style: italic;
+  font-weight: 400;
+  font-display: swap;
+  src: url("../assets/fonts/alegreya-latin-400-italic.woff2") format("woff2");
+}
+@font-face {
+  font-family: "Alegreya";
+  font-style: normal;
+  font-weight: 600;
+  font-display: swap;
+  src: url("../assets/fonts/alegreya-latin-600-normal.woff2") format("woff2");
+}
+@font-face {
+  font-family: "DM Mono";
+  font-style: normal;
+  font-weight: 500;
+  font-display: swap;
+  src: url("../assets/fonts/dm-mono-latin-500-normal.woff2") format("woff2");
+}
+
+:root {
+  --paper: #ffffff;
+  --desk: #e7e6e1;
+  --ink: #1f1c1a;
+  --ink-2: #5a5550;
+  --line: #cfccc4;
+  --rebate: #1a1716;
+  --edge: #e3a64a;
+  --pencil: #c42f3f;
+  --serif: "Alegreya", Georgia, "Times New Roman", serif;
+  --mono: "DM Mono", ui-monospace, Menlo, Consolas, monospace;
+  color-scheme: light;
+}
+
+* {
+  box-sizing: border-box;
+}
+
+body {
+  margin: 0;
+  padding: 24px 16px 64px;
+  background: var(--desk);
+  color: var(--ink);
+  font-family: var(--serif);
+  font-size: 16px;
+  line-height: 1.45;
+  -webkit-print-color-adjust: exact;
+  print-color-adjust: exact;
+}
+
+a {
+  color: inherit;
+}
+
+code {
+  font-family: var(--mono);
+  font-size: 0.85em;
+}
+
+.kit-head,
+.sheet-page {
+  width: 100%;
+  max-width: 210mm;
+  margin: 0 auto;
+}
+
+.kit-head {
+  padding-bottom: 20px;
+}
+.kit-head h1 {
+  margin: 4px 0 8px;
+  font-size: 2.2rem;
+  line-height: 1.1;
+}
+.kit-head p {
+  margin: 0 0 10px;
+  max-width: 40em;
+}
+.kit-nav {
+  display: flex;
+  flex-wrap: wrap;
+  gap: 8px 18px;
+  margin: 14px 0;
+  font-family: var(--mono);
+  font-size: 0.8rem;
+  letter-spacing: 0.06em;
+}
+#print-button {
+  min-height: 46px;
+  padding: 10px 20px;
+  border: 0;
+  border-radius: 2px;
+  background: var(--ink);
+  color: #fff;
+  font-family: var(--mono);
+  font-size: 0.82rem;
+  letter-spacing: 0.1em;
+  text-transform: uppercase;
+  cursor: pointer;
+}
+
+.eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  font-weight: 500;
+  letter-spacing: 0.14em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+
+.kit-loading,
+.kit-error {
+  max-width: 210mm;
+  margin: 0 auto;
+  font-family: var(--mono);
+}
+.kit-error {
+  color: var(--pencil);
+}
+
+.sheet-page {
+  margin-top: 24px;
+  padding: 12mm;
+  background: var(--paper);
+  box-shadow: 0 1px 3px rgba(0, 0, 0, 0.12), 0 12px 30px -16px rgba(0, 0, 0, 0.3);
+}
+.sheet-page h2 {
+  margin: 2px 0 6px;
+  font-size: 1.7rem;
+  line-height: 1.1;
+}
+.sheet-page > p {
+  margin: 0 0 10px;
+  font-size: 0.92rem;
+}
+
+.steps {
+  margin: 6px 0 12px;
+  padding-left: 1.3em;
+  font-size: 0.86rem;
+}
+.steps li {
+  margin-bottom: 3px;
+}
+
+.muted {
+  color: var(--ink-2);
+  font-size: 0.78rem;
+}
+.warn {
+  color: var(--pencil);
+  font-size: 0.78rem;
+  font-weight: 600;
+}
+
+/* Tag sheet */
+.tags {
+  width: 100%;
+  border-collapse: collapse;
+  font-size: 0.84rem;
+}
+.tags th {
+  padding: 4px 6px;
+  border-bottom: 1.5px solid var(--ink);
+  font-family: var(--mono);
+  font-size: 0.66rem;
+  font-weight: 500;
+  letter-spacing: 0.1em;
+  text-align: left;
+  text-transform: uppercase;
+}
+.tags td {
+  padding: 5px 6px;
+  border-bottom: 1px solid var(--line);
+  vertical-align: middle;
+}
+.tags tr {
+  break-inside: avoid;
+}
+.c-tag {
+  width: 11mm;
+  font-family: var(--serif);
+  font-size: 1.5rem;
+  font-weight: 600;
+  text-align: center;
+}
+.c-link {
+  font-family: var(--mono);
+  font-size: 0.72rem;
+  overflow-wrap: anywhere;
+}
+.c-link a {
+  text-decoration: none;
+}
+.c-qr {
+  width: 22mm;
+}
+.c-qr .qr {
+  display: block;
+  width: 19mm;
+  height: 19mm;
+}
+.c-check {
+  width: 24mm;
+  font-size: 0.74rem;
+}
+.c-check span {
+  display: block;
+  white-space: nowrap;
+}
+
+/* Tap marks */
+.marks {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, 31mm);
+  justify-content: space-between;
+  gap: 6mm 4mm;
+  margin: 10px 0 0;
+  padding: 0;
+  list-style: none;
+}
+.marks li {
+  display: grid;
+  justify-items: center;
+  gap: 1mm;
+}
+.marks li > span {
+  font-family: var(--mono);
+  font-size: 0.6rem;
+  color: var(--ink-2);
+}
+.mark {
+  display: block;
+  width: 31mm;
+  height: 31mm;
+}
+.mark .m-cut {
+  fill: #fff;
+  stroke: #b9b5ad;
+  stroke-width: 0.6;
+  stroke-dasharray: 2 2;
+}
+.mark .m-ring {
+  fill: none;
+  stroke: var(--ink);
+  stroke-width: 1.4;
+}
+.mark text {
+  text-anchor: middle;
+  fill: var(--ink);
+}
+.mark .m-tap {
+  font-family: var(--mono);
+  font-size: 9px;
+  font-weight: 500;
+  letter-spacing: 2.5px;
+}
+.mark .m-num {
+  font-family: var(--serif);
+  font-size: 36px;
+  font-weight: 600;
+}
+.mark .m-wave {
+  fill: none;
+  stroke: var(--pencil);
+  stroke-width: 3;
+  stroke-linecap: round;
+}
+.mark .m-mono {
+  font-family: var(--serif);
+  font-style: italic;
+  font-size: 10px;
+  fill: var(--ink-2);
+}
+
+/* Table card: 4 x 6 in, fits a 4R frame or acrylic stand */
+.cards {
+  display: grid;
+  justify-content: center;
+  gap: 8mm;
+  margin-top: 6mm;
+}
+.card {
+  display: flex;
+  flex-direction: column;
+  width: 101.6mm;
+  height: 152.4mm;
+  overflow: hidden;
+  border: 1px dashed #b9b5ad;
+  background: #fff;
+  break-inside: avoid;
+}
+.card-band {
+  display: flex;
+  flex: none;
+  justify-content: space-between;
+  align-items: center;
+  height: 11mm;
+  padding: 0 5mm;
+  background:
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Crect x='4' y='0.5' width='10' height='7' rx='1.6' fill='%23ffffff'/%3E%3C/svg%3E") repeat-x left 3px top 3px / 4.5mm 2mm,
+    url("data:image/svg+xml,%3Csvg xmlns='http://www.w3.org/2000/svg' width='18' height='8'%3E%3Crect x='4' y='0.5' width='10' height='7' rx='1.6' fill='%23ffffff'/%3E%3C/svg%3E") repeat-x left 3px bottom 3px / 4.5mm 2mm,
+    var(--rebate);
+  color: var(--edge);
+  font-family: var(--mono);
+  font-size: 6.5pt;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+}
+.card-body {
+  display: flex;
+  flex: 1 1 auto;
+  flex-direction: column;
+  padding: 7mm 7mm 5mm;
+}
+.card-eyebrow {
+  margin: 0;
+  font-family: var(--mono);
+  font-size: 7pt;
+  font-weight: 500;
+  letter-spacing: 0.16em;
+  text-transform: uppercase;
+  color: var(--ink-2);
+}
+.card-names {
+  margin: 2.5mm 0 5mm;
+  font-size: 27pt;
+  font-style: italic;
+  line-height: 1.02;
+}
+.card-names span {
+  color: var(--pencil);
+}
+.card-lead {
+  margin: 0 0 4mm;
+  font-size: 12.5pt;
+  line-height: 1.32;
+}
+.card-how {
+  margin: 0 0 2mm;
+  font-size: 9.5pt;
+  line-height: 1.35;
+}
+.card-qr {
+  display: flex;
+  align-items: center;
+  gap: 5mm;
+  margin-top: auto;
+  padding-top: 4mm;
+  border-top: 0.3mm solid var(--line);
+}
+.card-qr .qr {
+  flex: none;
+  width: 33mm;
+  height: 33mm;
+}
+.card-qr p {
+  margin: 0;
+  font-size: 10pt;
+  line-height: 1.35;
+}
+.card-foot {
+  margin: 3mm 0 0;
+  font-size: 7.5pt;
+  color: var(--ink-2);
+}
+
+/* Ruler */
+.ruler {
+  display: flex;
+  align-items: center;
+  gap: 4mm;
+  margin-top: 8mm;
+  font-size: 0.7rem;
+  color: var(--ink-2);
+}
+.ruler svg {
+  flex: none;
+  width: 51mm;
+  height: 4mm;
+}
+
+@media (max-width: 640px) {
+  .tags thead {
+    display: none;
+  }
+  .tags tr {
+    display: grid;
+    grid-template-columns: 3rem 1fr;
+    gap: 4px 8px;
+    padding: 8px 0;
+    border-bottom: 1px solid var(--line);
+  }
+  .tags td {
+    border: 0;
+    padding: 0;
+  }
+  .c-tag {
+    grid-row: span 3;
+  }
+  .c-qr,
+  .c-check {
+    width: auto;
+  }
+  .sheet-page {
+    padding: 16px;
+  }
+}
+
+@page {
+  size: A4 portrait;
+  margin: 12mm;
+}
+
+@media print {
+  body {
+    padding: 0;
+    background: #fff;
+  }
+  .kit-head,
+  .kit-nav,
+  #print-button {
+    display: none;
+  }
+  .sheet-page {
+    max-width: none;
+    margin: 0;
+    padding: 0;
+    box-shadow: none;
+    break-after: page;
+  }
+  .sheet-page:last-child {
+    break-after: auto;
+  }
+}

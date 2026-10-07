@@ -1,0 +1,27 @@
+<!doctype html>
+<html lang="en" data-root="/bff-wedding/">
+<head>
+  <meta charset="utf-8">
+  <meta name="viewport" content="width=device-width, initial-scale=1">
+  <meta name="robots" content="noindex, nofollow">
+  <title>Huixin &amp; Yongquan</title>
+  <script>
+    /* GitHub Pages shows this page for any address that doesn't exist. Send the guest to
+       the storybook's front page and keep ?t=, so a mistyped tag link still opens its story.
+       data-root must match the path of siteUrl in content/storybook.json (npm run check). */
+    (function () {
+      var root = document.documentElement.getAttribute('data-root') || '/';
+      if (location.pathname.indexOf(root) !== 0) root = '/';
+      if (location.pathname === root) return;
+      location.replace(root + location.search + location.hash);
+    })();
+  </script>
+  <style>
+    body { margin: 0; padding: 30vh 20px 0; background: #f3f3ef; color: #1f1c1a; font: 18px/1.5 Georgia, serif; text-align: center; }
+    @media (prefers-color-scheme: dark) { body { background: #121110; color: #ece7e1; } }
+  </style>
+</head>
+<body>
+  <p>This page doesn’t exist. <a href="./">Open the storybook</a>.</p>
+</body>
+</html>

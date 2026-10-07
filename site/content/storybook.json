@@ -1,0 +1,183 @@
+{
+  "siteUrl": "https://sweetpotating.github.io/bff-wedding/",
+  "names": ["Huixin", "Yongquan"],
+  "eyebrow": "The story behind the photos",
+  "date": "✎ Wedding date, e.g. Saturday 12 December 2026",
+  "venue": "✎ Venue name",
+  "welcome": [
+    "✎ A short hello from both of you, one or two sentences. For example: thank you for being here, and an invitation to tap the photos on the table to hear the stories behind them."
+  ],
+  "closing": [
+    "✎ A thank-you note to your guests, two or three sentences: who helped you get here, and what today means to you."
+  ],
+  "gate": "tap",
+  "links": {
+    "wishes": "",
+    "album": ""
+  },
+  "accent": "",
+  "tags": {
+    "0": "contact-sheet",
+    "1": "how-we-met",
+    "2": "first-date",
+    "3": "when-we-knew",
+    "4": "taiwan",
+    "5": "iceland",
+    "6": "new-zealand",
+    "7": "the-proposal",
+    "8": "wedding-shoot"
+  },
+  "stories": [
+    {
+      "id": "how-we-met",
+      "title": "How We Met",
+      "caption": "✎ Where and when, e.g. a friend's birthday dinner, 2017",
+      "photo": {
+        "src": "images/01-how-we-met.svg",
+        "alt": "✎ Describe the photo in one sentence for guests who use a screen reader",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ Where were you both the first time your paths crossed? Set the scene in two or three sentences: the place, the year, and what brought each of you there.",
+        "✎ What was your first impression of each other, and how right (or wrong) did it turn out to be?"
+      ],
+      "voices": [
+        { "name": "Huixin", "text": "✎ The first thing I noticed about Yongquan was…" },
+        { "name": "Yongquan", "text": "✎ The first thing I noticed about Huixin was…" }
+      ]
+    },
+    {
+      "id": "first-date",
+      "title": "Our First Date",
+      "caption": "✎ Where and when",
+      "photo": {
+        "src": "images/02-first-date.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ Who asked whom, and how? Did either of you call it a date at the time?",
+        "✎ Where did you go, and what is the one moment from that day you both still talk about?"
+      ],
+      "voices": [
+        { "name": "Huixin", "text": "✎ What I remember most about that day…" },
+        { "name": "Yongquan", "text": "✎ What I remember most about that day…" }
+      ]
+    },
+    {
+      "id": "when-we-knew",
+      "title": "When We Knew",
+      "caption": "✎ Where and when",
+      "photo": {
+        "src": "images/03-when-we-knew.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ Was there a moment when each of you knew the other was the one? It can be something big, or something small and ordinary.",
+        "✎ Did you tell anyone? Did you tell each other?"
+      ],
+      "voices": [
+        { "name": "Huixin", "text": "✎ I knew when…" },
+        { "name": "Yongquan", "text": "✎ I knew when…" }
+      ]
+    },
+    {
+      "id": "taiwan",
+      "kicker": "Adventure 1 of 3",
+      "title": "Taiwan",
+      "caption": "✎ Where you went and when, e.g. city names and month, year",
+      "photo": {
+        "src": "images/04-taiwan.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ Whose idea was the trip, and was it your first big trip together?",
+        "✎ Tell one story from the trip: the best thing you ate, the place you'd go back to, or the thing that went wrong and became a favourite memory."
+      ],
+      "gallery": [
+        { "src": "images/extra-1.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" },
+        { "src": "images/extra-2.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" }
+      ]
+    },
+    {
+      "id": "iceland",
+      "kicker": "Adventure 2 of 3",
+      "title": "Iceland",
+      "caption": "✎ Where you went and when",
+      "photo": {
+        "src": "images/05-iceland.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ When did you go, and what made you pick Iceland?",
+        "✎ One moment from the trip you both still talk about. Weather stories very welcome."
+      ],
+      "gallery": [
+        { "src": "images/extra-1.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" },
+        { "src": "images/extra-2.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" }
+      ]
+    },
+    {
+      "id": "new-zealand",
+      "kicker": "Adventure 3 of 3",
+      "title": "New Zealand",
+      "caption": "✎ Where you went and when",
+      "photo": {
+        "src": "images/06-new-zealand.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ When did you go, and how did you get around?",
+        "✎ One moment from the trip you both still talk about, and what this trip taught you about travelling together."
+      ],
+      "gallery": [
+        { "src": "images/extra-1.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" },
+        { "src": "images/extra-2.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" }
+      ]
+    },
+    {
+      "id": "the-proposal",
+      "title": "The Proposal",
+      "caption": "✎ Where and when",
+      "photo": {
+        "src": "images/07-the-proposal.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ How long was it planned, and who was in on the secret?",
+        "✎ Tell the moment itself: where you were, what was said, and what happened right after."
+      ],
+      "voices": [
+        { "name": "Huixin", "text": "✎ What went through my head…" },
+        { "name": "Yongquan", "text": "✎ What went through my head…" }
+      ]
+    },
+    {
+      "id": "wedding-shoot",
+      "title": "The Wedding Shoot",
+      "caption": "✎ Where and when",
+      "photo": {
+        "src": "images/08-wedding-shoot.svg",
+        "alt": "✎ Describe the photo in one sentence",
+        "position": "50% 50%"
+      },
+      "body": [
+        "✎ Where was the shoot, and who was behind the camera?",
+        "✎ A behind-the-scenes moment guests wouldn't guess from the photos: the outfit change, the weather, the pose that took forty tries."
+      ],
+      "voices": [
+        { "name": "Huixin", "text": "✎ My favourite photo from the shoot is… because…" },
+        { "name": "Yongquan", "text": "✎ My favourite photo from the shoot is… because…" }
+      ],
+      "gallery": [
+        { "src": "images/extra-1.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" },
+        { "src": "images/extra-2.svg", "alt": "✎ Describe the extra photo", "caption": "✎ Short caption" }
+      ]
+    }
+  ]
+}

@@ -1,0 +1,5 @@
+# Keep the storybook out of search engines.
+# Crawlers only read robots.txt at the root of a domain, so this file takes effect if the
+# site moves to a custom domain. On github.io, the noindex tag on every page does the job.
+User-agent: *
+Disallow: /

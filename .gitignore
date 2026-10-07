@@ -1,0 +1,8 @@
+node_modules/
+test-results/
+playwright-report/
+blob-report/
+.DS_Store
+
+# Original photos stay on your computer; only the web copies in site/images are published.
+/photos/
